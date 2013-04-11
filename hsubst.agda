@@ -83,7 +83,7 @@ mutual
 
   data Nf : Con → Ty → Set where
     λn   : forall {Γ σ τ} → Nf (Γ , σ) τ → Nf Γ (σ ⇒ τ)
-    ne   : forall {Γ} → Ne Γ ○ → Nf Γ ○
+    ne   : forall {Γ σ} → Ne Γ σ → Nf Γ σ
 
   data Ne : Con → Ty → Set where
     _,_  : forall {Γ σ τ} → Var Γ σ → Sp Γ σ τ → Ne Γ τ
@@ -121,8 +121,7 @@ mutual
   nvar x = ne2nf (x , ε)
 
   ne2nf : forall {σ Γ} → Ne Γ σ → Nf Γ σ
-  ne2nf {○}     xns      = ne xns
-  ne2nf {σ ⇒ τ} (x , ns) = λn (ne2nf (vs x , appSp (wkSp vz ns) (nvar vz)))
+  ne2nf = ne
 
 
 -- Hereditary substitutions: substitute a variable by a normal form and
@@ -132,6 +131,7 @@ mutual
 
   napp : forall {τ σ Γ} → Nf Γ (σ ⇒ τ) → Nf Γ σ → Nf Γ τ
   napp (λn t) u = t [ vz := u ]
+  napp (ne (f , xs)) u = ne (f , appSp xs u)
 
   _[_:=_] : forall {σ Γ τ} → (Nf Γ τ) → (x : Var Γ σ) → Nf (Γ - x) σ → Nf (Γ - x) τ
   (λn t) [ x := u ] = λn (t [ (vs x) := (wkNf vz u) ])
