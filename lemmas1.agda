@@ -130,7 +130,7 @@ substDiff3 (vs x) (vs y) = substDiff2 x y (substDiff3 x y)
 !λn refl _ = refl
 
 
-!ne : forall {Γ Δ σ} → (p : Γ ≡ Δ) → (x : Var Γ σ) → (ts : Sp Γ σ ○) → ! p >₂ ne (x , ts) ≡ ne (! p >₀ x , ! p >₃ ts)
+!ne : forall {Γ Δ σ τ} → (p : Γ ≡ Δ) → (x : Var Γ σ) → (ts : Sp Γ σ τ) → ! p >₂ ne (x , ts) ≡ ne (! p >₀ x , ! p >₃ ts)
 !ne refl _ _ = refl
 
 

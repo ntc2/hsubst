@@ -131,6 +131,7 @@ wkTmSubstExc y (app t₁ t₂) x u = begin
   _ ∎
 
 
+{-
 mutual
 
   -- wkNf and napp commute
@@ -187,3 +188,4 @@ mutual
     _ ≡⟨ cong (wkSp (rem y x)) (!, (conExc y x) (t [ x := u ]) (ts < x := u >)) ⟩
     _ ≡⟨ cong₂ (λ n us → n , us) (wkNfSubstNfExc y t x u) (wkSpSubstSpExc y ts x u) ⟩
     _ ∎
+-}

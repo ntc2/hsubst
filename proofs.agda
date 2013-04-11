@@ -31,8 +31,6 @@ infix 10 _βη-≡_
 open import hsubst
 open import lemmas1
 open import lemmas2
-open import lemmas3
-open import lemmas4
 
 open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
@@ -126,14 +124,7 @@ mutual
   -- Embedding the normal form of a Ne is βη-equivalent to embedding the Ne
 
   compNe : forall {σ Γ} → (n : Ne Γ σ) → ⌈ ne2nf n ⌉ βη-≡ embNe n
-  compNe {○} xns = brefl
-  compNe {σ ⇒ τ} (x , ns) = btrans
-                             (congΛ
-                              (btrans (compNe (vs x , appSp (wkSp vz ns) (ne2nf (vz , ε))))
-                               (btrans (accSp (wkSp vz ns) (nvar vz) (var (vs x)))
-                                (congApp (wkSpTm vz ns (var x)) (compVar vz)))))
-                             eta
-
+  compNe _ = brefl
 
   -- Embedding the normal form of a variable is βη-equivalent to the variable
 
@@ -154,7 +145,7 @@ mutual
 
   -- ⌈ ◇ ⌉ is like embSp thanks to the accumulator
 
-  appNfEmbSp : forall {Γ σ} → (u : Nf Γ σ) → (ts : Sp Γ σ ○) → ⌈ u ◇ ts ⌉ βη-≡ embSp ts ⌈ u ⌉
+  appNfEmbSp : forall {Γ σ τ} → (u : Nf Γ σ) → (ts : Sp Γ σ τ) → ⌈ u ◇ ts ⌉ βη-≡ embSp ts ⌈ u ⌉
   appNfEmbSp u ε = brefl
   appNfEmbSp u (t , ts) = btrans (appNfEmbSp (napp u t) ts) (congEmbSp ts (compApp u t))
 
@@ -179,6 +170,7 @@ mutual
 
   compApp : forall {Γ σ τ} → (t₁ : Nf Γ (σ ⇒ τ)) → (t₂ : Nf Γ σ) → ⌈ napp t₁ t₂ ⌉ βη-≡ app ⌈ t₁ ⌉ ⌈ t₂ ⌉
   compApp (λn t) u = btrans (substNfSubst t vz u) (bsym beta)
+  compApp (ne (f , xs)) u = accSp xs u (var f)
 
 
 -- Completeness
@@ -197,6 +189,9 @@ convertnf t u h = btrans (bsym (completeness t))
                     (btrans (equiv (cong ⌈_⌉ h)) (completeness u))
 
 
+-- We can no longer prove that the normalizer decides βη-equivalence
+-- ...  because it doesn't.
+{-
 -- .
 
 
@@ -412,3 +407,4 @@ mutual
     _ ≡⟨ nfEmbSpAppNf ts (var x) ⟩
     _ ≡⟨ appNfNe2nfConcat x ε ts ⟩
     _ ∎
+-}
